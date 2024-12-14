@@ -11,75 +11,62 @@ const TechnicalAnalysis = () => {
     const localStock = localStorage.getItem("ticker");
     return localStock || 'AAPL';
   });
-  const [technicalIndicators, setTechnicalIndicators] = useState({
-    ma20: 0,
-    rsi: 0,
-    bbWidth: 0
-  });
+  const [technicalIndicators, setTechnicalIndicators] = useState({ ma20: 0, rsi: 0, bbWidth: 0 });
 
   useEffect(() => {
-    
     const fetchData = async () => {
       try {
         const data = await getLiveStockData(searchSymbol, selectedTimeframe);
         if (data.success) {
-          // Process data for weekly view
-          let processedPrices;
-          if (selectedTimeframe === '1W') {
-            // Create a map to store one price per day
-            const dailyPrices = new Map();
-            
-            data.liveData.forEach(item => {
-              const dateKey = new Date(item.date).toDateString();
-              if (!dailyPrices.has(dateKey)) {
-                dailyPrices.set(dateKey, {
-                  time: new Date(item.date).getTime(),
-                  price: item.close
-                });
-              }
-            });
-            
-            // Convert map to array and sort by time
-            processedPrices = Array.from(dailyPrices.values())
-              .sort((a, b) => a.time - b.time);
-          } else {
-            processedPrices = data.liveData.map(item => ({
-              time: new Date(item.date).getTime(),
-              price: item.close
-            }));
-          }
-
-          // Calculate technical indicators
-          const prices = processedPrices.map(p => p.price);
-          const ma20 = calculateMA(prices, Math.min(20, prices.length));
-          const rsi = calculateRSI(prices, Math.min(14, prices.length));
-          const bbWidth = calculateBollingerBandWidth(prices, Math.min(20, prices.length));
-
-          setTechnicalIndicators({
-            ma20: ma20.toFixed(2),
-            rsi: rsi.toFixed(2),
-            bbWidth: bbWidth.toFixed(2)
-          });
-
-          // Prepare chart data
-          const chartData = processedPrices.map(p => ({
-            time: p.time,
-            price: p.price,
-            ma20: ma20,
-            upperBand: ma20 + (2 * calculateStdDev(prices, 20)),
-            lowerBand: ma20 - (2 * calculateStdDev(prices, 20))
-          }));
-
-          setChartData(chartData);
+          processStockData(data);
         }
       } catch (error) {
         console.error('Error fetching technical data:', error);
       }
     };
-
+  
     fetchData();
-  }, [searchSymbol,selectedTimeframe]);
+  }, [selectedTimeframe, searchSymbol]); // Add `searchSymbol` dependency
+  
 
+  const processStockData = (data) => {
+    let processedPrices;
+      processedPrices = data.liveData.map(item => ({
+        time: new Date(item.date).getTime(),
+        price: item.close,
+      }));
+
+    const prices = processedPrices.map(p => p.price);
+    const ma20 = calculateMA(prices, Math.min(20, prices.length));
+    const rsi = calculateRSI(prices, Math.min(14, prices.length));
+    const bbWidth = calculateBollingerBandWidth(prices, Math.min(20, prices.length));
+
+    setTechnicalIndicators({
+      ma20: ma20.toFixed(2),
+      rsi: rsi.toFixed(2),
+      bbWidth: bbWidth.toFixed(2),
+    });
+
+    const chartDataArray = prepareChartData(processedPrices, ma20);
+    setChartData(chartDataArray);
+  };
+
+  const prepareChartData = (processedPrices) => {
+    const prices = processedPrices.map(p => p.price);
+  
+    return processedPrices.map((p, i) => {
+      const ma20 = i >= 19 ? calculateMA(prices.slice(0, i + 1), 20) : NaN;
+      const stdDev = i >= 19 ? calculateStdDev(prices.slice(0, i + 1), 20) : NaN;
+  
+      return {
+        time: p.time,
+        price: p.price,
+        ma20: ma20,
+        upperBand: ma20 && stdDev ? ma20 + 2 * stdDev : NaN,
+        lowerBand: ma20 && stdDev ? ma20 - 2 * stdDev : NaN,
+      };
+    });
+  };
   const renderChart = () => {
     const options = {
       chart: {
@@ -181,7 +168,6 @@ const TechnicalAnalysis = () => {
         }
       }
     };
-
     return <HighchartsReact highcharts={Highcharts} options={options} />;
   };
 
@@ -201,26 +187,12 @@ const TechnicalAnalysis = () => {
           <div className="indicator-value">{technicalIndicators.bbWidth}%</div>
         </div>
       </div>
-
       <div className="timeframe-buttons">
-        <button 
-          className={selectedTimeframe === '1D' ? 'active' : ''} 
-          onClick={() => setSelectedTimeframe('1D')}
-        >1D</button>
-        <button 
-          className={selectedTimeframe === '1W' ? 'active' : ''} 
-          onClick={() => setSelectedTimeframe('1W')}
-        >1W</button>
-        <button 
-          className={selectedTimeframe === '1M' ? 'active' : ''} 
-          onClick={() => setSelectedTimeframe('1M')}
-        >1M</button>
-        <button 
-          className={selectedTimeframe === '1Y' ? 'active' : ''} 
-          onClick={() => setSelectedTimeframe('1Y')}
-        >1Y</button>
+        <button className={selectedTimeframe === '1D' ? 'active' : ''} onClick={() => setSelectedTimeframe('1D')}>1D</button>
+        <button className={selectedTimeframe === '1W' ? 'active' : ''} onClick={() => setSelectedTimeframe('1W')}>1W</button>
+        <button className={selectedTimeframe === '1M' ? 'active' : ''} onClick={() => setSelectedTimeframe('1M')}>1M</button>
+        <button className={selectedTimeframe === '1Y' ? 'active' : ''} onClick={() => setSelectedTimeframe('1Y')}>1Y</button>
       </div>
-
       {renderChart()}
     </div>
   );
@@ -228,44 +200,50 @@ const TechnicalAnalysis = () => {
 
 // Technical indicator calculation functions
 function calculateMA(prices, period) {
-  if (prices.length < period) return 0;
-  const sum = prices.slice(-period).reduce((a, b) => a + b, 0);
-  return sum / period;
+  if (prices.length < period) return NaN;
+  return prices.slice(-period).reduce((a, b) => a + b, 0) / period;
 }
 
 function calculateRSI(prices, period) {
-  if (prices.length < period + 1) return 0;
-  
+  if (prices.length < period + 1) return NaN;
   let gains = 0;
   let losses = 0;
   
-  for (let i = 1; i <= period; i++) {
-    const difference = prices[prices.length - i] - prices[prices.length - i - 1];
-    if (difference >= 0) {
-      gains += difference;
-    } else {
-      losses -= difference;
-    }
+  for (let i = prices.length - period; i < prices.length; i++) {
+    const difference = prices[i] - prices[i - 1];
+    if (difference >= 0) gains += difference;
+    else losses -= difference;
   }
-  
+
   if (losses === 0) return 100;
   
   const rs = gains / losses;
+  
   return 100 - (100 / (1 + rs));
 }
 
 function calculateStdDev(prices, period) {
-  if (prices.length < period) return 0;
-  const mean = calculateMA(prices, period);
+  if (prices.length < period) return NaN;
+  
+  const mean = calculateMA(prices.slice(-period), period);
+  
   const squaredDiffs = prices.slice(-period).map(price => Math.pow(price - mean, 2));
+  
   return Math.sqrt(squaredDiffs.reduce((a, b) => a + b, 0) / period);
 }
 
 function calculateBollingerBandWidth(prices, period) {
-  if (prices.length < period) return 0;
-  const ma = calculateMA(prices, period);
-  const stdDev = calculateStdDev(prices, period);
+  if (prices.length < period) return NaN;
+  
+  const ma = calculateMA(prices.slice(-period), period);
+  
+  const stdDev = calculateStdDev(prices.slice(-period), period);
+  
   return ((2 * stdDev) / ma) * 100;
 }
 
-export default TechnicalAnalysis; 
+export default TechnicalAnalysis;
+
+
+
+

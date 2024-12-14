@@ -6,6 +6,7 @@ import { getStockDataPrediction, trainModel } from '../api';
 import { AlarmCheck } from 'lucide-react';
 
 const Predictions = () => {
+  //Fetching the Global Stock Ticker from the localStorage
   const [searchSymbol, setSearchSymbol] = useState(() => {
     const localStock = localStorage.getItem("ticker");
     return localStock || 'AAPL';
@@ -22,8 +23,8 @@ const Predictions = () => {
 
   const determineRecommendation = (currentPrice, predictedPrice) => {
     const percentChange = ((predictedPrice - currentPrice) / currentPrice) * 100;
-    if (percentChange > 1) return 'Buy';
-    if (percentChange < -1) return 'Sell';
+    if (percentChange > 2) return 'Buy';
+    if (percentChange < -2) return 'Sell';
     return 'Hold';
   };
 

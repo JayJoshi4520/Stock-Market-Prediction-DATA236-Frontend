@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: 'http://127.0.0.1:8000/getlivedata',
+  baseURL: process.env.REACT_APP_BACKEND_URL,
 });
 
 const BASE_URL = process.env.REACT_APP_BACKEND_URL;
@@ -44,26 +44,7 @@ export const subscribeToStockUpdates = (symbol, onUpdate) => {
   };
 };
 
-// const getInterval = (timeFrame) => {
-//   switch (timeFrame) {
-//     case '1D': return '1d';
-//     case '1W': return '1d';
-//     case '1M': return '1d';
-//     case '1Y': return '1wk';
-//     default: return '1d';
-//   }
-// };
-
-// const getStockPeriod = (timeFrame) => {
-//   switch (timeFrame) {
-//     case '1D': return '10d';
-//     case '1W': return '1mo';
-//     case '1M': return '3mo';
-//     case '1Y': return '1y';
-//     default: return '1d';
-//   }
-// };
-
+// Fetch Ticker based on company name
 const getTicker = async (companyName) => {
 
   try {
@@ -97,7 +78,7 @@ const getTicker = async (companyName) => {
 }
 
 
-
+// Fetch live stock data from API
 export const getLiveStockData = async (symbol, timeframe) => {
 
   const resGetTicker = getTicker(symbol)
@@ -149,7 +130,7 @@ export const getLiveStockData = async (symbol, timeframe) => {
 };
 
 
-
+// Start training the model if pretrained model is not available
 export const trainModel = async(symbol) => {
   const resGetTicker = getTicker(symbol)
   symbol = (await resGetTicker).ticker
@@ -187,7 +168,7 @@ export const trainModel = async(symbol) => {
 }
 
 
-
+// Fetch the stock price prediction
 export const getStockDataPrediction = async (symbol, timeframe) => {
   const resGetTicker = getTicker(symbol)
   symbol = (await resGetTicker).ticker
@@ -220,8 +201,6 @@ export const getStockDataPrediction = async (symbol, timeframe) => {
         liveData: []
       };
     }
-    
-    
 
     return {
       success: true,
@@ -246,6 +225,7 @@ export const getStockDataPrediction = async (symbol, timeframe) => {
   }
 };
 
+// Fertching the list of stocks
 export const getStocks = async () => {
   try {
     const response = await fetch(`${BASE_URL}/getstocks`);
@@ -256,6 +236,8 @@ export const getStocks = async () => {
   }
 };
 
+
+// Fetching the Market Data
 export const formatMarketData = (response) => {
   if (!response.success || !response.liveData || response.liveData.length === 0) {
     return { current: 0, change: 0, data: [] };
@@ -330,4 +312,4 @@ export const handleApiError = (error) => {
   };
 };
 
-export default instance; 
+export default instance;

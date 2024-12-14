@@ -79,19 +79,6 @@ export default function Blog() {
           </p>
         </div>
 
-        {/* <div className="mb-8">
-          <div className="relative max-w-xl mx-auto">
-            <input
-              type="text"
-              placeholder="Search articles..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-3 pl-12 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-            <Search className="absolute left-4 top-3.5 text-gray-400" size={20} />
-          </div>
-        </div> */}
-
         <div className="mb-12">
           <div className="flex flex-wrap justify-center gap-4">
             {categories.map(({ name, icon: Icon }) => (

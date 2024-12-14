@@ -116,8 +116,9 @@ const StockAnalysis = () => {
       labels: {
         style: { color: '#808080' },
         format: selectedTimeframe === '1D' ? '{value:%H:%M}' : 
-               selectedTimeframe === '1W' ? '{value:%e %b}' : 
-               '{value:%Y-%m-%d}'
+                selectedTimeframe === '1W' ? '{value:%a, %b %d}' :
+                selectedTimeframe === '1M' ? '{value:%b %d}' :
+                '{value:%d %b %Y}'
       },
       gridLineColor: '#333333',
       lineColor: '#333333',

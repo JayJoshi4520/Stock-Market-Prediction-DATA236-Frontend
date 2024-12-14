@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getLiveStockData } from '../api'; // Ensure this function fetches real-time stock data
+import { getLiveStockData } from '../api'; 
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import HighchartsStock from 'highcharts/modules/stock';
@@ -17,7 +17,6 @@ const Dashboard = () => {
   const [stockData, setStockData] = useState({});
   const [selectedStockData, setSelectedStockData] = useState({ symbol: '', company: '', chartData: [] });
 
-  // Add ticker data for the scrolling banner
   const tickerData = Object.entries(stockData).map(([symbol, data]) => ({
     symbol,
     price: (data.price || 0).toFixed(2),
@@ -63,7 +62,7 @@ const Dashboard = () => {
           symbol: searchSymbol,
           company: response.company,
           chartData: response.liveData.map(data => [
-            data.date,
+            data.date * 1000,
             data.open,
             data.high,
             data.low,
@@ -81,8 +80,8 @@ const Dashboard = () => {
     fetchAllStocks();
     handleSearch();
 
-    const interval = setInterval(fetchAllStocks, 60000); // Update every minute
-    return () => clearInterval(interval); // Cleanup on unmount
+    const interval = setInterval(fetchAllStocks, 60000); 
+    return () => clearInterval(interval); 
   }, [selectedTimeframe]);
 
   // Render stock cards
@@ -102,7 +101,7 @@ const Dashboard = () => {
 
   // Chart options for Highcharts
   const chartOptions = {
-    chart: { type: 'candlestick', backgroundColor: '#1E1E1E', height: 400 },
+    chart: { type: 'candlestick', backgroundColor: '#1E1E1E', height: 400,  animation: true,},
     navigator: {
       enabled: true,
       series: {
@@ -116,7 +115,19 @@ const Dashboard = () => {
       }
     },
     title: { text: `${selectedStockData.company} Stock Price`, style: { color: '#FFFFFF' } },
-    xAxis: { type: 'datetime', labels: { style: { color: '#FFFFFF' } } },
+    xAxis: {
+      type: 'datetime',
+      labels: {
+        style: { color: '#808080' },
+        format: selectedTimeframe === '1D' ? '{value:%H:%M}' : 
+                selectedTimeframe === '1W' ? '{value:%a, %b %d}' :
+                selectedTimeframe === '1M' ? '{value:%b %d}' :
+                '{value:%d %b %Y}'
+      },
+      gridLineColor: '#333333',
+      lineColor: '#333333',
+      tickColor: '#333333'
+    },
     yAxis: { title: { text: 'Price', style: { color: '#808080' } }, labels: { style: { color: '#808080' } } },
     series: [
       {

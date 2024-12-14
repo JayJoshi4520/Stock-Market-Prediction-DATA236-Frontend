@@ -5,7 +5,7 @@ import axios from 'axios';
 const basePath = "https://finnhub.io/api/v1";
 const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 const instance = axios.create({
-  baseURL: 'http://127.0.0.1:8000/getlivedata',
+  baseURL: process.env.REACT_APP_BACKEND_URL,
 });
 
 export const fetchStockData = async (symbol, timeFrame) => {
@@ -70,7 +70,7 @@ const getTicker = async (companyName) => {
   }
 }
 
-
+//Fetch Stock and Company's details.
 export const fetchStockDetails = async (stockSymbol) => {
 
     const resGetTicker = getTicker(stockSymbol)
