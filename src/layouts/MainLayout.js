@@ -7,7 +7,8 @@ import {
   RiseOutlined,
   BarChartOutlined,
   ReadOutlined,
-  MenuOutlined
+  MenuOutlined,
+  HomeOutlined
 } from '@ant-design/icons';
 
 const { Header, Content } = Layout;
@@ -20,8 +21,13 @@ const MainLayout = () => {
   const menuItems = [
     {
       key: '/',
+      icon: <HomeOutlined />,
+      label: <Link to="/">Home</Link>,
+    },
+    {
+      key: '/dashbaord',
       icon: <DashboardOutlined />,
-      label: <Link to="/">Dashboard</Link>,
+      label: <Link to="/dashboard">Dashboard</Link>,
     },
     {
       key: '/analysis',
@@ -57,7 +63,7 @@ const MainLayout = () => {
   const closeDrawer = () => setIsDrawerVisible(false);
 
   return (
-    <Layout style={{ minHeight: '100vh', padding: 5}}>
+    <Layout style={{ minHeight: '100vh', padding: 5, backgroundColor: '#141414'}}>
       {/* Header */}
       <Header
         style={{
@@ -65,7 +71,7 @@ const MainLayout = () => {
           borderRadius: '20px',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: windowWidth > 768 ? 'center' : 'flex-end', // Center menu on desktop, right-align button on mobile
+          justifyContent: windowWidth > 768 ? 'center' : 'flex-end', 
         }}
       >
         {windowWidth > 768 ? (
@@ -75,7 +81,7 @@ const MainLayout = () => {
             selectedKeys={[location.pathname]}
             items={menuItems}
             style={{
-              lineHeight: '64px',
+              lineHeight: '64px'
             }}
           />
         ) : (
@@ -93,7 +99,7 @@ const MainLayout = () => {
         closable={true}
         onClose={closeDrawer}
         open={isDrawerVisible}
-        bodyStyle ={{ padding: 0 }}
+        bodyStyle ={{ padding: 0, backgroundColor: '#141414' }}
       >
         <Menu
           mode="vertical"

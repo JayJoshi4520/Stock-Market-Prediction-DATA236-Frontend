@@ -72,7 +72,7 @@ const Dashboard = () => {
         });
       }
     } catch (error) {
-      console.error('Error fetching stock data:', error);
+      alert('Error fetching stock data:', error);
     }
   };
 

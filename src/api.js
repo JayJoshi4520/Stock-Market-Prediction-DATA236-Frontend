@@ -4,7 +4,7 @@ const instance = axios.create({
   baseURL: 'http://127.0.0.1:8000/getlivedata',
 });
 
-const BASE_URL = 'https://data-236-api-168397596336.us-west1.run.app';
+const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 let ws = null;
 
 export const subscribeToStockUpdates = (symbol, onUpdate) => {

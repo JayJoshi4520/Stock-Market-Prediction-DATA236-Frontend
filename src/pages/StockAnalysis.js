@@ -82,7 +82,7 @@ const StockAnalysis = () => {
 
       return () => clearInterval(interval);
     }
-  }, [searchSymbol ,selectedTimeframe]);
+  }, [ selectedTimeframe]);
 
   const chartOptions = {
     chart: {
