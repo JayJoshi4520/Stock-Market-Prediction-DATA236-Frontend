@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Highcharts, { stockChart } from 'highcharts';
+import Highcharts, { stockChart, time } from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import './Predictions.css';
 import { getStockDataPrediction, trainModel } from '../api';
@@ -11,7 +11,7 @@ const Predictions = () => {
     const localStock = localStorage.getItem("ticker");
     return localStock || 'AAPL';
   });
-  const [selectedTimeframe, setSelectedTimeframe] = useState('1Y');
+  const [selectedTimeframe, setSelectedTimeframe] = useState('1D');
   const [stockData, setStockData] = useState({
     stock: 'AAPL',
     currentPrice: 242.86,
@@ -28,19 +28,26 @@ const Predictions = () => {
     return 'Hold';
   };
 
+  const handleTimeframeChange = async (timeframe) => {
+    setSelectedTimeframe(timeframe);
+    handleSearch()
+  };
+
   const handleSearch = async() => {
     if (searchSymbol) {
       localStorage.setItem("ticker", searchSymbol);
       const basePrice = 100 + Math.random() * 200; 
-      getStockDataPrediction(searchSymbol, "1Y").then((res) => {
+      getStockDataPrediction(searchSymbol, selectedTimeframe).then((res) => {
+        
 
         if(res.success){
           const liveData = res.liveData
           const prediction = res.prediction
+          
           const tempLiveData = []
           const tempPredictionData = []
           liveData.forEach(element => {
-            tempLiveData.push([element.date * 1000 ,element.close - (Math.floor(Math.random() * (2 - (-1) + 1)) + (-1))])
+            tempLiveData.push([element.date * 1000, element.close - (Math.floor(Math.random() * (2 - (-1) + 1)) + (-1))])
           });
           prediction.forEach(element => {
             tempPredictionData.push([element.date * 1000 ,element.prediction])
@@ -128,6 +135,18 @@ const Predictions = () => {
       lineWidth: 2,
       dashStyle: 'dash'
     }],
+    navigator: {
+      enabled: true,
+      series: {
+        color: '#4CAF50',
+        lineWidth: 1
+      },
+      xAxis: {
+        labels: {
+          style: { color: '#808080' }
+        }
+      }
+    },
     legend: {
       enabled: true,
       itemStyle: { color: '#808080' },
@@ -143,6 +162,7 @@ const Predictions = () => {
       shared: true,
       split: false
     },
+
     credits: { enabled: false }
   };
 
@@ -179,6 +199,24 @@ const Predictions = () => {
             </div>
           </div>
         </div>
+      </div>
+      <div className="timeframe-buttons">
+        <button 
+          className={selectedTimeframe === '1D' ? 'active' : ''} 
+          onClick={() => handleTimeframeChange('1D')}
+        >1D</button>
+        <button 
+          className={selectedTimeframe === '1W' ? 'active' : ''} 
+          onClick={() => handleTimeframeChange('1W')}
+        >1W</button>
+        <button 
+          className={selectedTimeframe === '1M' ? 'active' : ''} 
+          onClick={() => handleTimeframeChange('1M')}
+        >1M</button>
+        <button 
+          className={selectedTimeframe === '1Y' ? 'active' : ''} 
+          onClick={() => handleTimeframeChange('1Y')}
+        >1Y</button>
       </div>
 
       <div className="chart-container">

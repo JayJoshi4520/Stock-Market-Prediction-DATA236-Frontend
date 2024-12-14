@@ -4,7 +4,7 @@ const instance = axios.create({
   baseURL: process.env.REACT_APP_BACKEND_URL,
 });
 
-const BASE_URL = process.env.REACT_APP_BACKEND_URL;
+const BASE_URL = "http://127.0.0.1:8000";
 let ws = null;
 
 export const subscribeToStockUpdates = (symbol, onUpdate) => {
@@ -135,7 +135,7 @@ export const trainModel = async(symbol) => {
   const resGetTicker = getTicker(symbol)
   symbol = (await resGetTicker).ticker
   try{  
-    const response = await fetch(`${BASE_URL}/training`, {
+    const response = await fetch(`${BASE_URL}/trainingOnTechnical`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -176,7 +176,7 @@ export const getStockDataPrediction = async (symbol, timeframe) => {
   
   try {
     // Make the data request directly without health check
-    const response = await fetch(`${BASE_URL}/prediction`, {
+    const response = await fetch(`${BASE_URL}/predictionOnTechnical`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
