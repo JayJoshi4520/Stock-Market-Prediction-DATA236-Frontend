@@ -3,7 +3,7 @@
 ## To Start the Project follow the below steps
 
 ## Clone the Repo
-1. ```git clone https://github.com/JayJoshi4520/Project-DATA236-Tanu.git```
+1. ```git clone https://github.com/JayJoshi4520/Project-DATA236-Final.git```
 2. ```cd Project-DATA236-Tanu```
 
 
@@ -13,7 +13,7 @@
 
 ## Create .env file.
 - Get your Free Finnhub API key from [Finnhub.io](https://finnhub.io/)
-- Create ```.env``` file in ```Project-DATA236-Tanu``` directory.
+- Create ```.env``` file in ```Project-DATA236-Final``` directory.
 - Add REACT_APP_API_KEY = 'YOUR FINHUB API KEY'
 
 
