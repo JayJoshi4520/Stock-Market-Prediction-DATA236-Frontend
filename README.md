@@ -1,10 +1,10 @@
-# Project of DATA236-Sec21: Stock Market Dashboard with Stock Market Prediction using Market Indicators
+# Academic Project of DATA236-Sec21: Stock Market Dashboard with Stock Market Prediction using Market Indicators
 
-## To Start the Project follow the below steps
+## To Start the Project, follow the below steps
 
 ## Clone the Repo
-1. ```git clone https://github.com/JayJoshi4520/Project-DATA236-Final.git```
-2. ```cd Project-DATA236-Tanu```
+1. ```git clone https://github.com/JayJoshi4520/Stock-Market-Prediction-DATA236-Frontend```
+2. ```cd Stock-Market-Prediction-DATA236-Frontend```
 
 
 ## Start the Front-End
@@ -13,7 +13,7 @@
 
 ## Create .env file.
 - Get your Free Finnhub API key from [Finnhub.io](https://finnhub.io/)
-- Create ```.env``` file in ```Project-DATA236-Final``` directory.
+- Create ```.env``` file in ```Stock-Market-Prediction-DATA236-Frontend``` directory.
 - Add REACT_APP_API_KEY = 'YOUR FINHUB API KEY'
 
 
